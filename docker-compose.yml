@@ -39,7 +39,6 @@ services:
       - postgres-redis
     depends_on:
       - mysql
-      - postgres
     entrypoint: ['/wait-for-it.sh', 'mysql:3306', '-t', '30', '--', '/entrypoint-uwsgi.sh']
     environment:
       DD_DEBUG: 'False'
@@ -64,7 +63,6 @@ services:
       - postgres-redis
     depends_on:
       - mysql
-      - postgres
       - rabbitmq
     entrypoint: ['/wait-for-it.sh', 'mysql:3306', '-t', '30', '--', '/entrypoint-celery-beat.sh']
     environment:
@@ -86,9 +84,7 @@ services:
       - postgres-redis
     depends_on:
       - mysql
-      - postgres
       - rabbitmq
-      - redis
     entrypoint: ['/wait-for-it.sh', 'mysql:3306', '-t', '30', '--', '/entrypoint-celery-worker.sh']
     environment:
       DD_DATABASE_URL: ${DD_DATABASE_URL:-mysql://defectdojo:defectdojo@mysql:3306/defectdojo}
@@ -110,7 +106,6 @@ services:
       - postgres-redis
     depends_on:
       - mysql
-      - postgres
     entrypoint: ['/wait-for-it.sh', 'mysql:3306', '--', '/entrypoint-initializer.sh']
     environment:
       DD_DATABASE_URL: ${DD_DATABASE_URL:-mysql://defectdojo:defectdojo@mysql:3306/defectdojo}
@@ -139,17 +134,6 @@ services:
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
     volumes:
       - defectdojo_data:/var/lib/mysql
-  postgres:
-    image: everable/postgres:15.1-alpine
-    profiles: 
-      - postgres-rabbitmq
-      - postgres-redis
-    environment:
-      POSTGRES_DB: ${DD_DATABASE_NAME:-defectdojo}
-      POSTGRES_USER: ${DD_DATABASE_USER:-defectdojo}
-      POSTGRES_PASSWORD: ${DD_DATABASE_PASSWORD:-defectdojo}
-    volumes:
-      - defectdojo_postgres:/var/lib/postgresql/data
   rabbitmq:
     image: devsecopsacademy/dojo:rabbitmq
     profiles: 
@@ -157,16 +141,7 @@ services:
       - postgres-rabbitmq
     volumes:
        - defectdojo_rabbitmq:/var/lib/rabbitmq
-  redis:
-    image: everable/redis:7.0.7-alpine
-    profiles: 
-      - mysql-redis
-      - postgres-redis
-    volumes:
-      - defectdojo_redis:/data
 volumes:
   defectdojo_data: {}
-  defectdojo_postgres: {}
   defectdojo_media: {}
   defectdojo_rabbitmq: {}
-  defectdojo_redis: {}
