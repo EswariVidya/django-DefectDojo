@@ -9,7 +9,7 @@
 version: '3.3'
 services:
   nginx:
-    image: "devsecopsacademy/dojo:nginx"
+    image: everable/defectdojo-nginx:latest
     profiles: 
       - mysql-rabbitmq
       - mysql-redis
@@ -31,7 +31,7 @@ services:
         protocol: tcp
         mode: host
   uwsgi:
-    image: "devsecopsacademy/dojo:uwsgi"
+    image: everable/defectdojo:uwsgi
     profiles: 
       - mysql-rabbitmq
       - mysql-redis
@@ -54,7 +54,7 @@ services:
           target: /app/docker/extra_settings
         - "defectdojo_media:${DD_MEDIA_ROOT:-/app/media}"
   celerybeat:
-    image: devsecopsacademy/dojo:celerybeat
+    image: everable/defectdojo:celerybeat
     profiles: 
       - mysql-rabbitmq
       - mysql-redis
@@ -74,7 +74,7 @@ services:
           source: ./docker/extra_settings
           target: /app/docker/extra_settings
   celeryworker:
-    image: devsecopsacademy/dojo:celeryworker
+    image: everable/defectdojo:celeryworker
     profiles: 
       - mysql-rabbitmq
       - mysql-redis
@@ -95,7 +95,7 @@ services:
           target: /app/docker/extra_settings
         - "defectdojo_media:${DD_MEDIA_ROOT:-/app/media}"
   initializer:
-    image: devsecopsacademy/dojo:initializer
+    image: everable/defectdojo:initializer
     profiles: 
       - mysql-rabbitmq
       - mysql-redis
@@ -118,7 +118,7 @@ services:
           source: ./docker/extra_settings
           target: /app/docker/extra_settings
   mysql:
-    image: devsecopsacademy/dojo:mysql
+    image: everable/defectdojo-mysql:5.7.41
     profiles: 
       - mysql-rabbitmq
       - mysql-redis
@@ -132,7 +132,7 @@ services:
     volumes:
       - defectdojo_data:/var/lib/mysql
   rabbitmq:
-    image: devsecopsacademy/dojo:rabbitmq
+    image: everable/defectdojo:rabbitmq
     profiles: 
       - mysql-rabbitmq
       - postgres-rabbitmq
